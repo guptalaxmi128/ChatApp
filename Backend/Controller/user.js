@@ -30,14 +30,24 @@ exports.register = async (req, res) => {
         const salt = await bcrypt.genSalt(SALT);
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
         // Create USer in database
-        await User.create({
+        const user = await User.create({
             ...req.body,
             password: hashedPassword
         });
+        // generate JWT Token
+        const authToken = jwt.sign(
+            {
+                id: user.id,
+                email: req.body.email
+            },
+            USER_JWT_SECRET_KEY,
+            { expiresIn: JWT_VALIDITY } // five day
+        );
         // Send final success response
         res.status(200).send({
             success: true,
-            message: 'Registered successfully!'
+            message: 'Registered successfully!',
+            data: { authToken: authToken, name: req.body.name, email: req.body.email, mobileNumber: req.body.mobileNumber }
         });
     } catch (err) {
         res.status(500).send({
@@ -91,7 +101,7 @@ exports.login = async (req, res) => {
         res.status(200).send({
             success: true,
             message: 'Loged in successfully!',
-            authToken: authToken
+            data: { authToken: authToken, name: user.name, email: req.body.email, mobileNumber: user.mobileNumber }
         });
     } catch (err) {
         res.status(500).send({
