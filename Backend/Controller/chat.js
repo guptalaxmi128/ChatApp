@@ -32,6 +32,7 @@ exports.createPrivateChat = async (req, res) => {
         if (chat) {
             return res.status(200).json(chat);
         }
+        
         const newChat = await Chat.create({ chatType: "Private" });
         const users = [];
         for (let i = 0; i < userArray.length; i++) {
