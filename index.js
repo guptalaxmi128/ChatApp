@@ -30,7 +30,7 @@ app.get('/', (req, res) => {
 const onlineUser = [];
 
 io.on('connection', (socket) => {
-
+  console.log("User connected", socket.id);
   // Online User
   socket.on("onlineUser", (userId) => {
     !onlineUser.some((user) => user.userId === userId) &&
@@ -48,10 +48,14 @@ io.on('connection', (socket) => {
   socket.on('join-room', (room, userName) => {
     console.log(userName);
     socket.join(room);
-  })
+  });
   // Typing
   socket.on('is-typing', (room, userName) => {
     socket.to(room).emit('typing', { userName: userName });
+  });
+  // Disconnect
+  socket.on('disconnect', () => {
+    io.emit("getOnlineUser", { onlineUser: onlineUser });
   });
 });
 
