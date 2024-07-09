@@ -49,7 +49,7 @@ io.on('connection', (socket) => {
     console.log(userName);
     socket.join(room);
   })
-  //socket.on('is typing', function(data){
+  // Typing
   socket.on('is-typing', (room, userName) => {
     socket.to(room).emit('typing', { userName: userName });
   });
