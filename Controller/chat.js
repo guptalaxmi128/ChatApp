@@ -24,15 +24,18 @@ exports.createPrivateChat = async (req, res) => {
                 model: Chat_User,
                 as: "users",
                 where: {
-                    userId: userArray
+                    userId: firstId
                 },
                 require: true
             }]
         });
         if (chat) {
-            return res.status(200).json(chat);
+            const isSecond = await Chat_User.findOne({ where: { userId: secondId, chatId: chat.id } });
+            if (isSecond) {
+                return res.status(200).json(chat);
+            }
         }
-        
+
         const newChat = await Chat.create({ chatType: "Private" });
         const users = [];
         for (let i = 0; i < userArray.length; i++) {
