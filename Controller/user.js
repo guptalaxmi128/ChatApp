@@ -47,7 +47,7 @@ exports.register = async (req, res) => {
         res.status(200).send({
             success: true,
             message: 'Registered successfully!',
-            data: { authToken: authToken, name: req.body.name, email: req.body.email, mobileNumber: req.body.mobileNumber }
+            data: { authToken: authToken, fullName: req.body.fullName, email: req.body.email, mobileNumber: req.body.mobileNumber, id: user.id }
         });
     } catch (err) {
         res.status(500).send({
@@ -101,7 +101,7 @@ exports.login = async (req, res) => {
         res.status(200).send({
             success: true,
             message: 'Loged in successfully!',
-            data: { authToken: authToken, name: user.name, email: req.body.email, mobileNumber: user.mobileNumber }
+            data: { authToken: authToken, fullName: user.fullName, email: req.body.email, mobileNumber: user.mobileNumber, id: user.id }
         });
     } catch (err) {
         res.status(500).send({
