@@ -16,7 +16,7 @@ exports.createPrivateChat = async (req, res) => {
         const { secondId } = req.body;
         const firstId = req.user.id;
         const userArray = [firstId, secondId];
-        const chat = await Chat.findOne({
+        const chats = await Chat.findAll({
             where: {
                 chatType: "Private"
             },
@@ -29,15 +29,21 @@ exports.createPrivateChat = async (req, res) => {
                 require: true
             }]
         });
-        if (chat) {
-            console.log("Chat is present");
-            const isSecond = await Chat_User.findOne({ where: { userId: secondId, chatId: chat.id } });
+        let chat;
+        for (let i = 0; i < chats.length; i++) {
+            const isSecond = await Chat_User.findOne({ where: { chatId: chats[i].id, userId: secondId } });
             if (isSecond) {
-                console.log("Second User");
-                return res.status(200).json(chat);
+                chat = {
+                    ...chats[i].dataValues,
+                    users: [chats[i].dataValues.users[0].dataValues, isSecond.dataValues]
+                }
+                break;
             }
         }
-        return res.send("If condition is not running");
+        if (chat) {
+            return res.status(200).json({ chat });
+        }
+        // return;
         const newChat = await Chat.create({ chatType: "Private" });
         const users = [];
         for (let i = 0; i < userArray.length; i++) {
