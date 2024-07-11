@@ -41,7 +41,7 @@ exports.createPrivateChat = async (req, res) => {
             }
         }
         if (chat) {
-            return res.status(200).json({ chat });
+            return res.status(200).json(chat);
         }
         // return;
         const newChat = await Chat.create({ chatType: "Private" });
@@ -137,7 +137,10 @@ exports.getMessage = async (req, res) => {
         const chat = await Message.findAll({
             where: {
                 chatId: chatId
-            }
+            },
+            order: [
+                ['createdAt', 'DESC']
+            ]
         });
         res.status(200).json(chat);
     } catch (err) {
